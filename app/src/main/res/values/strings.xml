@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">CatchTheMoment</string>
+    <string name="text_moment">Write here your moment</string>
+    <string name="ok_button">OK</string>
+    <string name="photo_of_your_moment">Photo of your moment</string>
+    <string name="indicate_of_moment">indicate_of_moment</string>
+    <string name="image_of_moment">image_of_moment</string>
 </resources>
