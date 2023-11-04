@@ -7,8 +7,10 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +39,26 @@ class MainActivity : AppCompatActivity() {
         addButton = findViewById(R.id.imageButton)
 
         imageView.setOnClickListener {
-            pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            startActivity(Intent.createChooser())
+//            pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//            pickIntent.type = "image/*"
+//            val chooseIntent = Intent.createChooser(pickIntent, "Select image")
+//            chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent, galleryIntent))
+//            if (chooseIntent.equals(cameraIntent)) {
+//                imageView.setImageURI(cameraIntent.data)
+//            }
+//            startActivity(chooseIntent)
+        }
+
+        val momentText = momentDescription.text
+        val dateFormat = SimpleDateFormat("hh:mm:ss\ndd/mm/yyyy", Locale.forLanguageTag("ru-RU"))
+        val currentDate = dateFormat.format(Date())
+
+        addButton.setOnClickListener {
+            val dataIntent = Intent(this, MomentsActivity::class.java)
+            dataIntent.putExtra(Intent.EXTRA_STREAM, imageView.drawable.toString())
+            dataIntent.putExtra(Intent.EXTRA_TEXT, momentText)
+            dataIntent.putExtra(Intent.EXTRA_TEXT, currentDate)
+            startActivity(dataIntent)
         }
     }
 }
