@@ -28,7 +28,7 @@ class MomentsAdapter(private val dataList: List<MomentsData>) : RecyclerView.Ada
         val data = dataList[position]
         // attach data to holder
         holder.indicator.setImageResource(data.indicatorResId)
-        holder.momentImage.setImageURI(data.momentImageResId)
+        holder.momentImage.setImageBitmap(data.momentImageResId)
         holder.momentText.text = data.momentTextResId
         holder.momentDate.text = data.momentDateResId
     }

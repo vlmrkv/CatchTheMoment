@@ -1,6 +1,7 @@
 package com.mrkv.catchthemoment
 
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,16 +52,23 @@ class MainActivity : AppCompatActivity() {
 //            startActivity(chooseIntent)
         }
 
+
+
+
+        addButton.setOnClickListener {
+            attachDataToSend()
+        }
+    }
+
+    private fun attachDataToSend() {
+        val image = imageView.drawable.toBitmap(50, 50, null)
         val momentText = momentDescription.text
         val dateFormat = SimpleDateFormat("hh:mm:ss\ndd/mm/yyyy", Locale.forLanguageTag("ru-RU"))
         val currentDate = dateFormat.format(Date())
-
-        addButton.setOnClickListener {
-            val dataIntent = Intent(this, MomentsActivity::class.java)
-            dataIntent.putExtra(Intent.EXTRA_STREAM, imageView.drawable.toString())
-            dataIntent.putExtra(Intent.EXTRA_TEXT, momentText)
-            dataIntent.putExtra(Intent.EXTRA_TEXT, currentDate)
-            startActivity(dataIntent)
-        }
+        val dataIntent = Intent(this, MomentsActivity::class.java)
+        dataIntent.putExtra("image", image)
+        dataIntent.putExtra("momentText", momentText)
+        dataIntent.putExtra("dateOfCreate", currentDate)
+        startActivity(dataIntent)
     }
 }

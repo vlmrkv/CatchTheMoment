@@ -1,10 +1,10 @@
 package com.mrkv.catchthemoment
 
-import android.net.Uri
+import android.graphics.Bitmap
 
 data class MomentsData (
     val indicatorResId: Int,
-    val momentImageResId: Uri?,
+    val momentImageResId: Bitmap?,
     val momentTextResId: String?,
     val momentDateResId: String?
 )
