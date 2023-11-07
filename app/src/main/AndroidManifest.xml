@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -13,6 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CatchTheMoment"
         tools:targetApi="31">
+        <service
+            android:name=".CmService"
+            android:exported="false" />
+
         <activity
             android:name=".MomentsActivity"
             android:exported="false" />
@@ -25,11 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service android:name=".MainActivity"
-            android:foregroundServiceType="specialUse"
-            android:exported="false">
-        </service>
     </application>
 
 </manifest>
