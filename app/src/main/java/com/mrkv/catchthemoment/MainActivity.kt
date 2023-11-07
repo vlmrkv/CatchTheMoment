@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun attachDataToSend() {
         val image = imageView.drawable.toBitmap(50, 50, null)
-        val momentText = momentDescription.text
+        val momentText = momentDescription.text.toString()
         val dateFormat = SimpleDateFormat("hh:mm:ss\ndd/mm/yyyy", Locale.forLanguageTag("ru-RU"))
         val currentDate = dateFormat.format(Date())
         val dataIntent = Intent(this, MomentsActivity::class.java)
