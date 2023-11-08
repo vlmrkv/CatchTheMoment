@@ -5,4 +5,8 @@
     <string name="photo_of_your_moment">Photo of your moment</string>
     <string name="indicate_of_moment">indicate_of_moment</string>
     <string name="image_of_moment">image_of_moment</string>
+    <string name="settings">Settings</string>
+    <string name="history">History</string>
+    <string name="newest_first">Newest first</string>
+    <string name="by_creation_date">By creation date</string>
 </resources>

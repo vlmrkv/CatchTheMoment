@@ -9,6 +9,8 @@ import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        actionBar?.show()
 
         imageView = findViewById(R.id.imageView)
         momentDescription = findViewById(R.id.editMomentText)
@@ -71,6 +74,19 @@ class MainActivity : AppCompatActivity() {
 
         val serviceIntent = Intent(this, CmService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.options, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.menu_item_history -> startActivity(Intent(this, MomentsActivity::class.java))
+        }
+        return true
     }
 
     private fun attachDataToSend() {
