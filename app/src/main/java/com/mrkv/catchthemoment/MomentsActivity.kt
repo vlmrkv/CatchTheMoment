@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MomentsActivity : AppCompatActivity() {
+class MomentsActivity(private val dataList: MutableList<MomentsData>) : AppCompatActivity() {
 
     private val MOMENTS_PREFERENCES = "moment card"
     private val MOMENT_PREF_INDICATOR = "moment pref indicator"
@@ -22,9 +22,8 @@ class MomentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_moments)
 
-        val dataList: List<MomentsData> = listOf(
-            MomentsData(R.drawable.yellow_indicator, getImageFromIntent(), getMomentTextFromIntent(), getMomentDateFromIntent())
-        )
+        // Get mutable list from intent
+        val dataList: MutableList<MomentsData> = intent.getParcelableArrayListExtra<MomentsData>("dataList") as MutableList<MomentsData>
         val momentsAdapter = MomentsAdapter(dataList)
         val recyclerView = findViewById<RecyclerView>(R.id.moments_recycler_view)
         recyclerView.adapter = momentsAdapter
@@ -33,25 +32,11 @@ class MomentsActivity : AppCompatActivity() {
         saveMoments()
     }
 
-    private fun getImageFromIntent(): Bitmap? {
-        val imageBytes = intent.getByteArrayExtra("image")
-        val imageBitmap = imageBytes?.let { BitmapFactory.decodeByteArray(imageBytes, 0, it.size) }
-        return imageBitmap
-    }
-
-    private fun getMomentTextFromIntent(): String? {
-        return intent.getStringExtra("momentText")
-    }
-
-    private fun getMomentDateFromIntent(): String? {
-        return intent.getStringExtra("dateOfCreate")
-    }
-
     private fun saveMoments() {
         momentCard = getSharedPreferences(MOMENTS_PREFERENCES, Context.MODE_PRIVATE)
         val editor: Editor = momentCard.edit()
-        editor.putString(MOMENT_PREF_TEXT, intent.getStringExtra("momentText").toString())
-        editor.putString(MOMENT_PREF_DATE, intent.getStringExtra("dateOfCreate").toString())
+//        editor.putString(MOMENT_PREF_TEXT, intent.getStringExtra("momentText").toString())
+//        editor.putString(MOMENT_PREF_DATE, intent.getStringExtra("dateOfCreate").toString())
         editor.apply()
     }
 }

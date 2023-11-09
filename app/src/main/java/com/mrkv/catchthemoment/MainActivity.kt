@@ -1,13 +1,19 @@
 package com.mrkv.catchthemoment
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.AlertDialog.Builder
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,6 +23,7 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toIcon
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -26,54 +33,38 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var momentDescription: EditText
     private lateinit var addButton: ImageButton
-    private val CHANNEL_ID = "CmService Channel"
-    private val galleryIntent: Intent = Intent()
-    private val cameraIntent: Intent = Intent("android.media.action.IMAGE_CAPTURE")
-    private val pickIntent: Intent = Intent()
-
-    // take URI of picked image and set image to ImageView
-    private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { imageUri ->
-        if (imageUri != null) {
-            imageView.setImageURI(imageUri)
-            galleryIntent.putExtra(Intent.EXTRA_STREAM, imageUri)
-        } else {
-            Log.d("PhotoPicker", "No photo selected")
-        }
-    }
+    private var dataList: MutableList<MomentsData> = mutableListOf()
+    private val SELECT_IMAGE_REQUEST = 0
+    private var selectedImage: Uri? = null
+    private var bitmap: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         actionBar?.show()
 
+        // Initialization views
         imageView = findViewById(R.id.imageView)
         momentDescription = findViewById(R.id.editMomentText)
         addButton = findViewById(R.id.imageButton)
 
         imageView.setOnClickListener {
-//            pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-//            pickIntent.type = "image/*"
-//            val chooseIntent = Intent.createChooser(pickIntent, "Select image")
-//            chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent, galleryIntent))
-//            if (chooseIntent.equals(cameraIntent)) {
-//                imageView.setImageURI(cameraIntent.data)
-//            }
-//            startActivity(chooseIntent)
+            chooseImage()
         }
 
         addButton.setOnClickListener {
-            attachDataToSend()
+            attachDataToSend(dataList)
         }
-
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "CmService Channel",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
 
         val serviceIntent = Intent(this, CmService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SELECT_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            selectedImage = data?.data
+            Log.d("MainActivity", "onActivityResult started")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,15 +80,27 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun attachDataToSend() {
+    private fun chooseImage() {
+        val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val chooserIntent = Intent.createChooser(pickIntent, "Select Image")
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+        startActivityForResult(chooserIntent, SELECT_IMAGE_REQUEST)
+//        bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+
+    }
+
+    private fun attachDataToSend(list: MutableList<MomentsData>) {
         val image = imageView.drawable.toBitmap(50, 50, null)
         val momentText = momentDescription.text.toString()
-        val dateFormat = SimpleDateFormat("hh:mm:ss\ndd/mm/yyyy", Locale.forLanguageTag("ru-RU"))
+        val dateFormat = SimpleDateFormat("hh:mm:ss\ndd/mm/yyyy", Locale.getDefault())
         val currentDate = dateFormat.format(Date())
+        val moment = MomentsData(null, image, momentText, currentDate)
+        dataList.add(moment)
         val dataIntent = Intent(this, MomentsActivity::class.java)
-        dataIntent.putExtra("image", image)
-        dataIntent.putExtra("momentText", momentText)
-        dataIntent.putExtra("dateOfCreate", currentDate)
+        dataIntent.putExtra("dataList", arrayOf(dataList))
+//        dataIntent.putExtra("momentText", momentText)
+//        dataIntent.putExtra("dateOfCreate", currentDate)
         startActivity(dataIntent)
     }
 }

@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MomentsAdapter(private val dataList: List<MomentsData>) : RecyclerView.Adapter<MomentsAdapter.MomentsViewHolder>() {
+class MomentsAdapter(private val dataList: MutableList<MomentsData>) : RecyclerView.Adapter<MomentsAdapter.MomentsViewHolder>() {
 
     class MomentsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val indicator: ImageView = itemView.findViewById(R.id.indicate)
@@ -27,7 +27,7 @@ class MomentsAdapter(private val dataList: List<MomentsData>) : RecyclerView.Ada
     override fun onBindViewHolder(holder: MomentsViewHolder, position: Int) {
         val data = dataList[position]
         // attach data to holder
-        holder.indicator.setImageResource(data.indicatorResId)
+        data.indicatorResId?.let { holder.indicator.setImageResource(it) }
         holder.momentImage.setImageBitmap(data.momentImageResId)
         holder.momentText.text = data.momentTextResId
         holder.momentDate.text = data.momentDateResId
